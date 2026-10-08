@@ -1,6 +1,42 @@
 # INTerDames
 
-#Règles choisies
+L'objectif est de faire un Jeu de Dames à l'image de Chess.com pour les échecs, qui n'existe pas actuellement pour les passionnés du jeu.
+
+# Lancer le projet
+
+A compléter
+
+# Compte par défaut
+
+admin / projetinfo2a
+
+# RoadMap
+
+[x] ce qui a déjà été fait
+[] ce qu'il reste à faire
+
+[] Prise d'un pion
+[] transformation d'un pion en dame
+[] prise obligatoire
+[] système d'authentification
+[] création de la room
+[] bloqué la room à 2 joueurs
+[] début de partie
+[] fin de partie
+[] création du damier
+[] cliquer sur un pion et le déplacer
+[] correction des pages d'erreur (404 et 500)
+[] room visibles dans l'admin
+[] Dockerfile + gunicorn
+[] pouvoir coller et envoyer des URLs
+[] Boutons de connexion / déconnexion
+[] page d'inscription
+
+
+# Modèle de donnée
+
+
+# Règles choisies
 
 Règles du Jeu de Dames
 
