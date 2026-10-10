@@ -1,0 +1,30 @@
+body {
+    background-color: #f0e6d2;
+    font-family: Arial, sans-serif;
+   font-size: 19px;
+    
+}
+
+header {
+    background-color: #421e00ad;
+    color: white;
+    text-align: center;
+    font-size: 20px;
+    
+    border-radius: 0px;
+    
+}
+
+.contenu {
+    color: #421e00ad;
+    font-weight: bold;
+    text-align: center;
+
+    background: white;
+    padding: 5px;
+    border-radius: 5px;
+
+   
+    width: fit-content;
+    margin: 45px auto 10px auto; 
+}
