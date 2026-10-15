@@ -105,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'Paris'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
@@ -116,6 +116,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# renvoi sur accueil
+LOGIN_URL = '/'
 
 
 # Email
