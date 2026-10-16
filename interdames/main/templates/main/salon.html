@@ -1,0 +1,26 @@
+{% extends 'main/base.html' %}
+{% block contenu %}
+<h2>Salon</h2>
+<div class="zone">
+    <h3>Creer une room</h3>
+    <p>Crée une partie et ensuite envoie le lien à ton adversaire.</p>
+    <form method="post" action="/room/creer/">
+        {% csrf_token %}
+        <button type="submit">Creer une room</button>
+    </form></div>
+
+
+
+<div class="zone">
+    <h3>Rejoindre une room</h3>
+    <p>Colle ici le lien que ton adversaire a envoyé :</p>
+    <form method="post" action="/room/rejoindre/">
+        {% csrf_token %}
+        <input type="text" name="lien" size="50" required>
+        <button type="submit">Rejoindre</button>
+    </form></div>
+
+
+
+
+{% endblock %}

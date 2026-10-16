@@ -28,3 +28,39 @@ header {
     width: fit-content;
     margin: 45px auto 10px auto; 
 }
+
+.erreur {
+    color: red;
+    font-weight: bold;
+}
+
+button {
+    background-color: #5c3a1e;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+}
+
+#form-deconnexion {
+    margin-top: 5px;
+}
+
+#form-deconnexion button {
+    background-color: #a33;
+}
+
+.zone {
+    border: 2px solid #5c3a1e;
+    padding: 10px;
+    margin-bottom: 15px;
+}
+#haut {
+    background-color: #5c3a1e;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+#haut h1 {
+    margin: 0;
+}

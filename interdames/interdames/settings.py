@@ -118,7 +118,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # renvoi sur accueil
-LOGIN_URL = '/'
+# LOGIN_URL = '/'
 
 
 # Email
