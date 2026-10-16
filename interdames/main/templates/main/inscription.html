@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+{% block contenu %}
+<div class="inscription">
+<h2>Inscription</h2>
+{% if erreur != '' %}
+    <p class="erreur">{{ erreur }}</p>
+{% endif %}
+<form method="post">
+    {% csrf_token %}
+    <p>Pseudo (10 caractères max) : <input type="text" name="pseudo" maxlength="10" required></p>
+    <p>Mot de passe : <input type="password" name="mdp" required></p>
+    <p>Réécrire le mot de passe : <input type="password" name="mdp2" required></p>
+    <p><button type="submit">S'inscrire</button></p>
+</form>
+<p><a href="/">Retour à l'accueil</a></p>
+</div>
+{% endblock %}

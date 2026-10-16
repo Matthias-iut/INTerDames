@@ -36,14 +36,46 @@ header {
     
     background-color: white;
     border: 2px solid #421e00ad;
+   
 }
 
 button {
-    font-size: 15px;
+    font-size: 18px;
     background-color: #421e00ad;
     color: #f0e6d2;
     cursor: pointer;
     padding: 12px 22px;
     border: 2px solid #421e00ad;
+    
+}
 
+
+
+.btn-inscription {
+    margin-top: 20px;
+    background-color: #421e00ad;
+    color: #f0e6d2;
+    padding: 12px 24px;
+    border: 2px solid #421e00ad;
+    display: inline-block;
+    border-radius: 10px; 
+    margin-bottom: 10px;
+}
+
+.inscription {
+    background-color: white;
+    border: 2px solid #421e00ad;
+    padding: 20px;
+    width: fit-content;
+    margin: 45px auto auto auto;
+    
+}
+
+
+
+#form-deconnexion button {
+    background-color: rgb(215, 29, 29);
+    margin-bottom: 10px;
+    color: white;
+    font-weight: bold;
 }

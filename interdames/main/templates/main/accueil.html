@@ -21,6 +21,15 @@
         <p>Mot de passe : <input type="password" name="password" required></p>
         <p><button type="submit">Se connecter</button></p>
     </form>
+ <a href="/inscription/" class="btn-inscription">Pas encore inscrit ?</a>
     </div>
 {% endif %}
+
+{% if user.is_authenticated %}
+            <form method="post" action="/deconnexion/" id="form-deconnexion">
+                {% csrf_token %}
+            <button type="submit">Déconnexion</button>
+            </form>
+        {% endif %}
+
 {% endblock %}

@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+
 
 
 def accueil(request):
@@ -16,3 +18,30 @@ def accueil(request):
         else:
             erreur = 'Pseudo ou mot de passe incorrect'
     return render(request, 'main/accueil.html', {'erreur': erreur})
+
+
+def inscription(request):
+    erreur = ''
+    if request.method == 'POST':
+        pseudo = request.POST.get('pseudo', '')
+        mdp = request.POST.get('mdp', '')
+        mdp2 = request.POST.get('mdp2', '')
+        if pseudo == '':
+            erreur = 'Il faut mettre un pseudo'
+        elif len(pseudo) > 10:
+            erreur = 'Le pseudo doit faire 10 caractères maximum'
+        elif User.objects.filter(username=pseudo).exists():
+            erreur = 'Ce pseudo est déjà pris'
+        elif mdp == '':
+            erreur = 'Il faut mettre un mot de passe'
+        elif mdp != mdp2:
+            erreur = 'Les deux mots de passe ne sont pas pareils'
+        else:
+            utilisateur = User.objects.create_user(username=pseudo, password=mdp)
+            login(request, utilisateur)
+            return redirect('accueil')
+    return render(request, 'main/inscription.html', {'erreur': erreur})
+
+def deconnexion(request):
+    logout(request)
+    return redirect('accueil')
