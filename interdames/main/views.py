@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
-
+from django.contrib.auth.decorators import login_required
 
 def accueil(request):
     erreur = ''
@@ -45,3 +45,28 @@ def inscription(request):
 def deconnexion(request):
     logout(request)
     return redirect('accueil')
+
+
+@login_required
+def salon(request):
+    return render(request, 'main/salon.html')
+
+
+
+
+@login_required
+def creer_room(request):
+    if request.method == 'POST':
+        nouvelle_room = salleDeJeu()
+        nouvelle_room.user1Pseudo = request.user.username
+        nouvelle_room.save()
+        return redirect('room', token=nouvelle_room.token)
+    return redirect('salon')
+
+@login_required
+def room(request, token):
+    la_room = get_object_or_404(salleDeJeu, token=token)
+    # le lien a envoyer = addresse de la page
+    lien = request.build_absolute_uri()
+    return render(request, 'main/room.html', {'room': la_room, 'lien': lien})
+
