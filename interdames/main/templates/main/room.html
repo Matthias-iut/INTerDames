@@ -2,21 +2,27 @@
 
 {% block contenu %}
 <h2>Room</h2>
+
+
+{% if room.statut == 'attente' %}
 <div class="zone">
-    <p>Envoie ce lien à l'autre joueur :</p>
+    <p>Envoie ce lien à ton adversaire :</p>
     <input type="text" id="lien" value="{{ lien }}" size="60" readonly>
-    <button onclick="copierLien()">copier</button>
+    <button onclick="copierLien()">Copier</button>
     <span id="copie"></span>
 </div>
-
+{% endif %}
 <p>Joueur 1 (les blancs) : {{ room.user1Pseudo }}</p>
 {% if room.user2Pseudo %}
     <p>Joueur 2 (les noirs) : {{ room.user2Pseudo }}</p>
 {% else %}
     <p>En attente d'un adversaire...</p>
 {% endif %}
-<p><a href="/salon/">Retour au salon</a></p>
 
+
+
+
+<p><a href="/salon/">Retour au salon</a></p>
 
 
 <script>

@@ -66,7 +66,28 @@ def creer_room(request):
 @login_required
 def room(request, token):
     la_room = get_object_or_404(salleDeJeu, token=token)
-    # le lien a envoyer = addresse de la page
+    pseudo = request.user.username
+    if la_room.user1Pseudo != pseudo and la_room.isFull() == False:
+        la_room.user2Pseudo = pseudo
+        la_room.save()
+
+    if la_room.user1Pseudo != pseudo and la_room.user2Pseudo != pseudo:
+        return render(request, 'main/salon.html', {'erreur': 'Cette room est déjà pleine (2 joueurs max)'})
     lien = request.build_absolute_uri()
+    
+    
     return render(request, 'main/room.html', {'room': la_room, 'lien': lien})
+
+@login_required
+def rejoindre(request):
+    if request.method == 'POST':
+        lien = request.POST.get('lien', '')
+
+        morceaux = lien.strip().strip('/').split('/')
+        token = morceaux[len(morceaux) - 1]
+        if salleDeJeu.objects.filter(token=token).exists() == False:
+            return render(request, 'main/salon.html', {'erreur': "Ce lien est pas valide"})
+        return redirect('room', token=token)
+    
+    return redirect('salon')
 
