@@ -1,6 +1,12 @@
 {% extends 'main/base.html' %}
+
+
 {% block contenu %}
 <h2>Salon</h2>
+{% if erreur %}
+    <p class="erreur">{{ erreur }}</p>
+{% endif %}
+
 <div class="zone">
     <h3>Creer une room</h3>
     <p>Crée une partie et ensuite envoie le lien à ton adversaire.</p>
