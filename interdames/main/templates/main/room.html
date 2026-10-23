@@ -1,0 +1,38 @@
+{% extends 'main/base.html' %}
+
+{% block contenu %}
+<h2>Room</h2>
+<div class="zone">
+    <p>Envoie ce lien à l'autre joueur :</p>
+    <input type="text" id="lien" value="{{ lien }}" size="60" readonly>
+    <button onclick="copierLien()">copier</button>
+    <span id="copie"></span>
+</div>
+
+<p>Joueur 1 (les blancs) : {{ room.user1Pseudo }}</p>
+{% if room.user2Pseudo %}
+    <p>Joueur 2 (les noirs) : {{ room.user2Pseudo }}</p>
+{% else %}
+    <p>En attente d'un adversaire...</p>
+{% endif %}
+<p><a href="/salon/">Retour au salon</a></p>
+
+
+
+<script>
+function copierLien() {
+    var champ = document.getElementById("lien");
+    champ.select();
+    document.execCommand("copy");
+    document.getElementById("copie").innerHTML = "Lien copié!";
+}
+
+
+
+</script>
+
+
+
+
+
+{% endblock %}
