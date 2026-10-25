@@ -65,7 +65,11 @@ def deplacement_pion_possibles(plateau, ligne, colonne):
             nouvelle_colonne=colonne+diag
             if position_valide(nouvelle_ligne,nouvelle_colonne)==True:
                 if plateau[nouvelle_ligne][nouvelle_colonne]=="":
-                    action.append((nouvelle_ligne, nouvelle_colonne))
+                    action.append({"depart": [ligne, colonne], "chemin"
+                                   : [[nouvelle_ligne, nouvelle_colonne]], "prises": []})
+                    #ajout de "départ", "chemin" et "prises"
+                    #obligatoire pour la fonction rajouter "action_joue"
+                    #crée un dictionnaire référençant la position de départ, le chemin et les prises
     return action
 #si position_valide==False, il n'y a pas de case à vérifier, donc on ne fait rien
         
@@ -73,4 +77,20 @@ def deplacement_pion_possibles(plateau, ligne, colonne):
 #colonne=3
 #print(deplacement_pion_possibles(plateau_depart(),ligne,colonne))
 
+def action_joue(plateau, action):
+    coups_joue = []
+    for ligne in range(10): # on crée une copie du plateau pour ne pas modifier l'original
+        copie_ligne = []    #copie remplacera l'original pat le suite
+        for colonne in range(10):   #utile pour implémenter l'historique des coups joués
+            copie_ligne.append(plateau[ligne][colonne])
+        coups_joue.append(copie_ligne)
 
+    depart_ligne = action["depart"][0]
+    depart_colonne = action["depart"][1]
+    arrivee = action["chemin"][-1] #recupère la dernière case du chemin, utile si la pièce parcourt plusieurs cases
+    piece = coups_joue[depart_ligne][depart_colonne]
+    coups_joue[depart_ligne][depart_colonne] = ""
+    coups_joue[arrivee[0]][arrivee[1]] = piece
+    return coups_joue
+
+#print(action_joue(plateau_depart(), {"depart": [6, 3], "chemin": [[5, 2]], "prises": []}))
