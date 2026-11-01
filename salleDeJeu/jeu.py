@@ -77,20 +77,72 @@ def deplacement_pion_possibles(plateau, ligne, colonne):
 #colonne=3
 #print(deplacement_pion_possibles(plateau_depart(),ligne,colonne))
 
-def action_joue(plateau, action):
-    coups_joue = []
-    for ligne in range(10): # on crée une copie du plateau pour ne pas modifier l'original
-        copie_ligne = []    #copie remplacera l'original pat le suite
-        for colonne in range(10):   #utile pour implémenter l'historique des coups joués
+def copier_plateau(plateau):
+    copie = []
+    for ligne in range(10):
+        copie_ligne = []
+        for colonne in range(10):
             copie_ligne.append(plateau[ligne][colonne])
-        coups_joue.append(copie_ligne)
+        copie.append(copie_ligne)
+    return copie
 
+
+Directions=[[-1,-1],[-1,1],[1,-1],[1,1]] #les 4 directions possibles pour les déplacements et les prises
+
+def recherche_prises(plateau,ligne, colonne,piece,prise_effectuees):
+    suite=[]
+    couleur=couleur_de_piece(piece)
+    for d in Directions:
+        l_adv=ligne+d[0]
+        c_adv=colonne+d[1]  #emplacement de la pièce adverse
+        l_arrivee=ligne+2*d[0]
+        c_arrivee=colonne+2*d[1]    #emplacement de la case d'arrivée après la prise
+        if position_valide(l_arrivee,c_arrivee)==False:
+            continue #assure que la case d'arrivée est bien sur le plateau
+        if couleur_de_piece(plateau[l_adv][c_adv])!=couleur_adversaire(piece):
+            continue #assure que la piéce en diagonale est bien adverse
+        if [l_adv,c_adv] in prise_effectuees:
+            continue #assure qu'on ne peut pas prendre 2 fois la même pièce
+        if plateau[l_arrivee][c_arrivee]!="":
+            continue #assure que la case d'arrivée est bien vide
+        else:
+            prise=[l_adv,c_adv]
+            arrivee=[l_arrivee,c_arrivee]
+            rec=recherche_prises(plateau,l_arrivee,c_arrivee,piece,prise_effectuees+[prise]) #on ajoute la prise effectuée à la liste des prises
+            if len(rec)==0:     #si on ne peut plus prendre de pièces
+                suite.append({"depart":[ligne,colonne],"chemin":[arrivee],"prises":[prise]})
+            else:
+                for s in rec:   #on regarde tous les récursivités
+                    suite.append({"depart":[ligne,colonne],"chemin":[arrivee]+s["chemin"],"prises":[prise]+s["prises"]})
+    return suite
+#print(recherche_prises(plateau_depart(),6,3,"b",[]))
+
+def prises_possibles(plateau, ligne, colonne):
+    piece=plateau[ligne][colonne]
+    if piece=="":
+        return [] #on s'assure que la case contient bien une pièce
+    else:
+        copie=copier_plateau(plateau)
+        copie[ligne][colonne]="" #on enlève la pièce de la case au cas où elle revienne à cette position
+        recherche=recherche_prises(copie,ligne,colonne,piece,[])
+        coups=[]
+        for r in recherche:
+            coups.append({"depart":[ligne,colonne],"chemin":r["chemin"],"prises":r["prises"]})
+    return coups
+
+#print(prises_possibles(plateau_depart(),6,3))
+
+def action_joue(plateau, action):
+    coups_joue = [copier_plateau(plateau)]  # on crée une copie du plateau pour ne pas modifier l'original
+    
     depart_ligne = action["depart"][0]
     depart_colonne = action["depart"][1]
     arrivee = action["chemin"][-1] #recupère la dernière case du chemin, utile si la pièce parcourt plusieurs cases
     piece = coups_joue[depart_ligne][depart_colonne]
     coups_joue[depart_ligne][depart_colonne] = ""
     coups_joue[arrivee[0]][arrivee[1]] = piece
+    for p in action["prises"]: #on supprime les pièces prises du plateau
+        coups_joue[p[0]][p[1]] = ""
     return coups_joue
 
 #print(action_joue(plateau_depart(), {"depart": [6, 3], "chemin": [[5, 2]], "prises": []}))
