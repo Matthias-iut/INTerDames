@@ -5,6 +5,9 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
 def accueil(request):
+
+    if request.user.is_authenticated:
+        return redirect('salon')
     erreur = ''
 
     if request.method == 'POST':
@@ -14,7 +17,7 @@ def accueil(request):
         utilisateur = authenticate(request, username=pseudo, password=mdp)
         if utilisateur != None:
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
         else:
             erreur = 'Pseudo ou mot de passe incorrect'
     return render(request, 'main/accueil.html', {'erreur': erreur})
@@ -39,7 +42,7 @@ def inscription(request):
         else:
             utilisateur = User.objects.create_user(username=pseudo, password=mdp)
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
     return render(request, 'main/inscription.html', {'erreur': erreur})
 
 def deconnexion(request):
