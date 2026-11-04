@@ -56,7 +56,6 @@ def salon(request):
 
 
 
-
 @login_required
 def creer_room(request):
     if request.method == 'POST':

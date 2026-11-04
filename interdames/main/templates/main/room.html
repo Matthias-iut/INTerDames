@@ -3,7 +3,6 @@
 {% block contenu %}
 <h2>Room</h2>
 
-
 {% if room.statut == 'attente' %}
 <div class="zone">
     <p>Envoie ce lien à ton adversaire :</p>
@@ -20,8 +19,6 @@
 {% endif %}
 
 
-
-
 <p><a href="/salon/">Retour au salon</a></p>
 
 
@@ -32,13 +29,5 @@ function copierLien() {
     document.execCommand("copy");
     document.getElementById("copie").innerHTML = "Lien copié!";
 }
-
-
-
 </script>
-
-
-
-
-
 {% endblock %}

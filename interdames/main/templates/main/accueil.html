@@ -6,9 +6,7 @@
 </div>
 
 <div class="connection">    
-{% if user.is_authenticated %}
-    <p>Tu es connecté en tant que <b>{{ user.username }}</b>.</p>
-{% else %}
+
     <h2 style="background-color: #421e00ad; color: #f0e6d2;">Connexion</h2>
     
     {% if erreur != '' %}
@@ -23,13 +21,7 @@
     </form>
  <a href="/inscription/" class="btn-inscription">Pas encore inscrit ?</a>
     </div>
-{% endif %}
 
-{% if user.is_authenticated %}
-            <form method="post" action="/deconnexion/" id="form-deconnexion">
-                {% csrf_token %}
-            <button type="submit">Déconnexion</button>
-            </form>
-        {% endif %}
+
 
 {% endblock %}
