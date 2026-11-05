@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import salleDeJeu
 
+from .cache_partie import oublier_partie
 
 def accueil(request):
 
@@ -74,6 +75,7 @@ def room(request, token):
     if la_room.user1Pseudo != pseudo and la_room.isFull() == False:
         la_room.user2Pseudo = pseudo
         la_room.save()
+        oublier_partie(la_room.token)
 
     if la_room.user1Pseudo != pseudo and la_room.user2Pseudo != pseudo:
         return render(request, 'main/salon.html', {'erreur': 'Cette room est déjà pleine (2 joueurs max)'})
@@ -92,6 +94,5 @@ def rejoindre(request):
         if salleDeJeu.objects.filter(token=token).exists() == False:
             return render(request, 'main/salon.html', {'erreur': "Ce lien est pas valide"})
         return redirect('room', token=token)
-
 
     return redirect('salon')
