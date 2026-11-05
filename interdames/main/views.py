@@ -1,20 +1,24 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-
 from django.contrib.auth.decorators import login_required
+from .models import salleDeJeu
+
 
 def accueil(request):
+
+    if request.user.is_authenticated:
+        return redirect('salon')
     erreur = ''
 
     if request.method == 'POST':
         pseudo = request.POST.get('username')
         mdp = request.POST.get('password')
-        
+
         utilisateur = authenticate(request, username=pseudo, password=mdp)
         if utilisateur != None:
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
         else:
             erreur = 'Pseudo ou mot de passe incorrect'
     return render(request, 'main/accueil.html', {'erreur': erreur})
@@ -39,8 +43,9 @@ def inscription(request):
         else:
             utilisateur = User.objects.create_user(username=pseudo, password=mdp)
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
     return render(request, 'main/inscription.html', {'erreur': erreur})
+
 
 def deconnexion(request):
     logout(request)
@@ -52,8 +57,6 @@ def salon(request):
     return render(request, 'main/salon.html')
 
 
-
-
 @login_required
 def creer_room(request):
     if request.method == 'POST':
@@ -62,6 +65,7 @@ def creer_room(request):
         nouvelle_room.save()
         return redirect('room', token=nouvelle_room.token)
     return redirect('salon')
+
 
 @login_required
 def room(request, token):
@@ -73,10 +77,10 @@ def room(request, token):
 
     if la_room.user1Pseudo != pseudo and la_room.user2Pseudo != pseudo:
         return render(request, 'main/salon.html', {'erreur': 'Cette room est déjà pleine (2 joueurs max)'})
+    #le lien à envoyer à l'adversaire c'est juste l'adresse de la page
     lien = request.build_absolute_uri()
-    
-    
     return render(request, 'main/room.html', {'room': la_room, 'lien': lien})
+
 
 @login_required
 def rejoindre(request):
@@ -88,6 +92,6 @@ def rejoindre(request):
         if salleDeJeu.objects.filter(token=token).exists() == False:
             return render(request, 'main/salon.html', {'erreur': "Ce lien est pas valide"})
         return redirect('room', token=token)
-    
-    return redirect('salon')
 
+
+    return redirect('salon')
