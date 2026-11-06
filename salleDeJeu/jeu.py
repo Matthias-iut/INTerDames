@@ -191,3 +191,11 @@ def coups_max(plateau, couleur):
     return deplacements
 
 
+def promotion_dame(plateau, action,piece):
+    arrivee=action["chemin"][-1]  #récupère la dernière case du chemin
+    if piece == "b" and arrivee[0] == 0:
+        plateau[0][arrivee[1]] = "B"
+    elif piece == "n" and arrivee[0] == 9:
+        plateau[9][arrivee[1]] = "N"
+
+    return plateau
