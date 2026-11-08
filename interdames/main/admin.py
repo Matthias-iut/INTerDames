@@ -1,3 +1,7 @@
 from django.contrib import admin
+from .models import salleDeJeu, Pawn, Move
 
-# Register your models here.
+
+admin.site.register(salleDeJeu)
+admin.site.register(Pawn)
+admin.site.register(Move)

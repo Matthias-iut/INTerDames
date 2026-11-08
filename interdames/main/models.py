@@ -3,11 +3,11 @@ from django.conf import settings
 from django.db import models
 
 
-class Game(models.Model):
-    class Status(models.TextChoices):
-        WAITING = 'WAITING', 'En attente'
-        IN_PROGRESS = 'IN_PROGRESS', 'En cours'
-        FINISHED = 'FINISHED', 'Terminée'
+class salleDeJeu(models.Model):
+    class Statut(models.TextChoices):
+        ATTENTE = 'attente', 'En attente'
+        EN_COURS = 'en_cours', 'En cours'
+        TERMINEE = 'terminee', 'Terminée'
 
     class Color(models.TextChoices):
         WHITE = 'W', 'Blanc'
@@ -20,7 +20,7 @@ class Game(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # sert dans le lien de partage
     player_white = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='games_as_white')
     player_black = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='games_as_black', null=True, blank=True)
-    status = models.CharField(max_length=12, choices=Status.choices, default=Status.WAITING)
+    statut = models.CharField(max_length=12, choices=Statut.choices, default=Statut.ATTENTE)
     current_turn = models.CharField(max_length=1, choices=Color.choices, default=Color.WHITE)
     winner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='games_won')
     mode = models.CharField(max_length=10, choices=Mode.choices, default=Mode.CLASSIC)
@@ -32,8 +32,8 @@ class Game(models.Model):
 
 
 class Pawn(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='pawns')
-    color = models.CharField(max_length=1, choices=Game.Color.choices)
+    game = models.ForeignKey(salleDeJeu, on_delete=models.CASCADE, related_name='pawns')
+    color = models.CharField(max_length=1, choices=salleDeJeu.Color.choices)
     is_queen = models.BooleanField(default=False)
     x = models.PositiveSmallIntegerField(null=True, blank=True)  # null = capturé
     y = models.PositiveSmallIntegerField(null=True, blank=True)
@@ -43,7 +43,7 @@ class Pawn(models.Model):
 
 
 class Move(models.Model):
-    game = models.ForeignKey(Game, on_delete=models.CASCADE, related_name='moves')
+    game = models.ForeignKey(salleDeJeu, on_delete=models.CASCADE, related_name='moves')
     player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     pawn = models.ForeignKey(Pawn, on_delete=models.CASCADE, related_name='moves')
     from_x = models.PositiveSmallIntegerField()
