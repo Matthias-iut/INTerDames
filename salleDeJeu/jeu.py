@@ -23,20 +23,46 @@ def plateau_depart():
 
 #print (plateau_depart())
 
+def plateau_test():
+    plateau = []
+    for i in range(10):
+        plateau.append([""] * 10)
+        print(plateau[i])
+
+    plateau[5][2] = "b"
+    plateau[4][3] = "n"
+    plateau[2][5] = "n"
+
+    return plateau
+
+#print(plateau_test())
+
 def couleur_de_piece(piece):
-    if piece == "n":
+    if piece == "n" or piece == "N": #MAJ de la fonction pour prendre en compte les dames
         return "noir"
-    elif piece == "b":
+    elif piece == "b" or piece == "B":
         return "blanc"
     else:
         return "erreur"
 
 #print (couleur_de_piece("n"))
 
+def promotion_dame(plateau, action,piece):
+    arrivee=action["chemin"][-1]  #récupère la dernière case du chemin
+    if piece == "b" and arrivee[0] == 0:
+        plateau[0][arrivee[1]] = "B"
+    elif piece == "n" and arrivee[0] == 9:
+        plateau[9][arrivee[1]] = "N"
+
+    return plateau
+#a partir de maintenant, N ou B designeront les dames
+
+#print(promotion_dame(plateau_test(), {"depart": [6, 1], "chemin": [[5, 0]]}, "b"))
+
 def couleur_adversaire(piece):
-    if piece == "n":
+    if piece == "n" or piece == "N":
         return "blanc"
-    elif piece == "b":
+    elif piece == "b" or piece == "B":
         return "noir"
     else:
         return "erreur"
@@ -59,24 +85,22 @@ def copier_plateau(plateau):
         copie.append(copie_ligne)
     return copie
 
-def plateau_test():
-    plateau = []
-    for i in range(10):
-        plateau.append([""] * 10)
-        print(plateau[i])
 
-    plateau[5][2] = "b"
-    plateau[4][3] = "n"
-    plateau[2][5] = "n"
-
-    return plateau
-
-#print(plateau_test())
 
 def deplacement_pion_possibles(plateau, ligne, colonne):
     piece=plateau[ligne][colonne]
     action=[]
     if piece=="":
+        return action
+    if piece=="B" or piece=="N": #si c'est une dame, on peut se déplacer dans toutes les directions
+        for d in Directions:
+            nouvelle_ligne=ligne+d[0]
+            nouvelle_colonne=colonne+d[1]
+            while position_valide(nouvelle_ligne,nouvelle_colonne)==True and plateau[nouvelle_ligne][nouvelle_colonne]=="":
+                action.append({"depart": [ligne, colonne], "chemin"
+                               : [[nouvelle_ligne, nouvelle_colonne]], "prises": []})
+                nouvelle_ligne+=d[0]
+                nouvelle_colonne+=d[1]
         return action
     else:
         if couleur_de_piece(piece)=="blanc":
@@ -108,27 +132,46 @@ def recherche_prises(plateau,ligne, colonne,piece,prise_effectuees):
     suite=[]
     couleur=couleur_de_piece(piece)
     for d in Directions:
-        l_adv=ligne+d[0]
-        c_adv=colonne+d[1]  #emplacement de la pièce adverse
-        l_arrivee=ligne+2*d[0]
-        c_arrivee=colonne+2*d[1]    #emplacement de la case d'arrivée après la prise
-        if position_valide(l_arrivee,c_arrivee)==False:
-            continue #assure que la case d'arrivée est bien sur le plateau
-        if couleur_de_piece(plateau[l_adv][c_adv])!=couleur_adversaire(piece):
-            continue #assure que la piéce en diagonale est bien adverse
-        if [l_adv,c_adv] in prise_effectuees:
-            continue #assure qu'on ne peut pas prendre 2 fois la même pièce
-        if plateau[l_arrivee][c_arrivee]!="":
-            continue #assure que la case d'arrivée est bien vide, n'arrive normalement jamais
+        if piece=="B" or piece=="N": #si c'est une dame, on peut prendre dans toutes les directions
+            l_diag=ligne+d[0]
+            c_diag=colonne+d[1]
+            while position_valide(l_diag,c_diag)==True and plateau[l_diag][c_diag]=="":
+                l_diag+=d[0]
+                c_diag+=d[1]
+            if couleur_de_piece(plateau[l_diag][c_diag])!=couleur_adversaire(piece):
+                continue
+            if position_valide(l_diag,c_diag)==False:
+                continue
+            if [l_diag,c_diag] in prise_effectuees:
+                continue
+            l_opps=l_diag+d[0]
+            c_opps=c_diag+d[1]
+            while position_valide(l_opps,c_opps)==True and plateau[l_opps][c_opps]=="":
+                suite.append([l_opps,c_opps]) #on ajoute le coup à la liste des coups possibles
+                l_opps+=d[0]
+                c_opps+=d[1]
         else:
-            prise=[l_adv,c_adv]
-            arrivee=[l_arrivee,c_arrivee]
-            rec=recherche_prises(plateau,l_arrivee,c_arrivee,piece,prise_effectuees+[prise]) #on ajoute la prise effectuée à la liste des prises
-            if len(rec)==0:     #si on ne peut plus prendre de pièces
-                suite.append({"depart":[ligne,colonne],"chemin":[arrivee],"prises":[prise]})
-            else:
-                for s in rec:   #on regarde tous les récursivités
-                    suite.append({"depart":[ligne,colonne],"chemin":[arrivee]+s["chemin"],"prises":[prise]+s["prises"]})
+            l_adv=ligne+d[0]
+            c_adv=colonne+d[1]  #emplacement de la pièce adverse
+            l_arrivee=ligne+2*d[0]
+            c_arrivee=colonne+2*d[1]    #emplacement de la case d'arrivée après la prise
+            if position_valide(l_arrivee,c_arrivee)==False:
+                continue #assure que la case d'arrivée est bien sur le plateau
+            if couleur_de_piece(plateau[l_adv][c_adv])!=couleur_adversaire(piece):
+                continue #assure que la piéce en diagonale est bien adverse
+            if [l_adv,c_adv] in prise_effectuees:
+                continue #assure qu'on ne peut pas prendre 2 fois la même pièce
+            if plateau[l_arrivee][c_arrivee]!="":
+                continue #assure que la case d'arrivée est bien vide, n'arrive normalement jamais
+
+        prise=[l_adv,c_adv]
+        arrivee=[l_arrivee,c_arrivee]
+        rec=recherche_prises(plateau,l_arrivee,c_arrivee,piece,prise_effectuees+[prise]) #on ajoute la prise effectuée à la liste des prises
+        if len(rec)==0:     #si on ne peut plus prendre de pièces
+            suite.append({"depart":[ligne,colonne],"chemin":[arrivee],"prises":[prise]})
+        else:
+            for s in rec:   #on regarde tous les récursivités
+                suite.append({"depart":[ligne,colonne],"chemin":[arrivee]+s["chemin"],"prises":[prise]+s["prises"]})
     return suite
 #print(recherche_prises(plateau_depart(),6,3,"b",[]))
 
@@ -189,13 +232,3 @@ def coups_max(plateau, couleur):
                 for coup in deplacement_pion_possibles(plateau, ligne, colonne):
                     deplacements.append(coup)
     return deplacements
-
-
-def promotion_dame(plateau, action,piece):
-    arrivee=action["chemin"][-1]  #récupère la dernière case du chemin
-    if piece == "b" and arrivee[0] == 0:
-        plateau[0][arrivee[1]] = "B"
-    elif piece == "n" and arrivee[0] == 9:
-        plateau[9][arrivee[1]] = "N"
-
-    return plateau
