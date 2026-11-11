@@ -1,7 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+from .models import salleDeJeu
+from .cache_partie import oublier_partie
 
 
 def accueil(request):
+    if request.user.is_authenticated:
+        return redirect('salon')
     erreur = ''
 
     if request.method == 'POST':
@@ -11,7 +18,7 @@ def accueil(request):
         utilisateur = authenticate(request, username=pseudo, password=mdp)
         if utilisateur != None:
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
         else:
             erreur = 'Pseudo ou mot de passe incorrect'
     return render(request, 'main/accueil.html', {'erreur': erreur})
@@ -36,7 +43,7 @@ def inscription(request):
         else:
             utilisateur = User.objects.create_user(username=pseudo, password=mdp)
             login(request, utilisateur)
-            return redirect('accueil')
+            return redirect('salon')
     return render(request, 'main/inscription.html', {'erreur': erreur})
 
 def deconnexion(request):
@@ -67,6 +74,7 @@ def room(request, token):
     if la_room.user1Pseudo != pseudo and la_room.isFull() == False:
         la_room.user2Pseudo = pseudo
         la_room.save()
+        oublier_partie(la_room.token)
 
     if la_room.user1Pseudo != pseudo and la_room.user2Pseudo != pseudo:
         return render(request, 'main/salon.html', {'erreur': 'Cette room est déjà pleine (2 joueurs max)'})
@@ -83,8 +91,7 @@ def rejoindre(request):
         morceaux = lien.strip().strip('/').split('/')
         token = morceaux[len(morceaux) - 1]
         if salleDeJeu.objects.filter(token=token).exists() == False:
-            return render(request, 'main/salon.html', {'erreur': "Ce lien est pas valide"})
+            return render(request, 'main/salon.html', {'erreur': "Ce lien n'est pas valide"})
         return redirect('room', token=token)
     
     return redirect('salon')
-
