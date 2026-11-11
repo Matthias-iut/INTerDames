@@ -8,6 +8,7 @@ urlpatterns = [
     path('salon/', views.salon, name='salon'),
     path('room/creer/', views.creer_room, name='creer_room'),
     path('room/rejoindre/', views.rejoindre, name='rejoindre'),
-    path('room/<uuid:token>/', views.room, name='room'),
+    path('room/<str:token>/', views.room, name='room'),
+
 ]
 

@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne', # doit être en premier : avec daphne, runserver sait aussi gérer les WebSocket
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,6 +72,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'interdames.wsgi.application'
 
+# WebSocket (Django Channels) : l'application qui gère le http ET les WebSocket est dans asgi.py
+ASGI_APPLICATION = 'interdames.asgi.application'
+
+# la "channel layer" permet aux consumers (un par navigateur connecté) de s'envoyer des messages
+# en local on garde tout en mémoire, dans Docker on utilisera Redis
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
@@ -88,6 +100,15 @@ DATABASES = {
 }
 
 
+
+
+# Cache : on y range les parties en JSON pour les lire plus vite que dans la base
+# en local il est en mémoire, dans Docker ce sera Redis (voir le commit Docker)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
+}
 
 
 # Password validation
@@ -126,8 +147,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-# renvoi sur accueil
-LOGIN_URL = 'accueil'
+
+LOGIN_URL = '/'
 
 
 # Email

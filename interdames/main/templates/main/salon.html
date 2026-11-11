@@ -2,6 +2,8 @@
 
 
 {% block contenu %}
+<h2>Salon</h2>
+<p>Bonjour {{ user.username }}, crée une partie ou rejoins celle d'un ami.</p>
 {% if erreur %}
     <p class="erreur">{{ erreur }}</p>
 {% endif %}
