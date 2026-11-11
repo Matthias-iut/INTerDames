@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne', # doit être en premier : avec daphne, runserver sait aussi gérer les WebSocket
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -69,15 +72,42 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'interdames.wsgi.application'
 
+# WebSocket (Django Channels) : l'application qui gère le http ET les WebSocket est dans asgi.py
+ASGI_APPLICATION = 'interdames.asgi.application'
+
+# la "channel layer" permet aux consumers (un par navigateur connecté) de s'envoyer des messages
+# en local on garde tout en mémoire, dans Docker on utilisera Redis
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'authentification_db',      
+        'USER': 'postgres',           
+        'PASSWORD': 'sql',
+        'HOST': 'localhost',             
+        'PORT': '5432',                  
     }
+}
+
+
+
+
+# Cache : on y range les parties en JSON pour les lire plus vite que dans la base
+# en local il est en mémoire, dans Docker ce sera Redis (voir le commit Docker)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    },
 }
 
 
@@ -116,6 +146,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+LOGIN_URL = '/'
 
 
 # Email
