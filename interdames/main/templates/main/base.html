@@ -10,14 +10,6 @@
 <body>
     <header>
         <h1>INTerDames</h1>
-
-
-        {% if user.is_authenticated %}
-            <form method="post" action="/deconnexion/" id="form-deconnexion">
-                {% csrf_token %}
-                Connecté en tant que {{ user.username }} <button type="submit">Déconnexion</button>
-            </form>
-        {% endif %}
     </header>
 
     
