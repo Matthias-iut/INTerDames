@@ -91,11 +91,11 @@ CHANNEL_LAYERS = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'authentification_db',      
-        'USER': 'postgres',           
+        'NAME': 'interdames_db',
+        'USER': 'postgres',
         'PASSWORD': 'sql',
-        'HOST': 'localhost',             
-        'PORT': '5432',                  
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
