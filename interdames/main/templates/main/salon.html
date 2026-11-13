@@ -9,7 +9,8 @@
 <div class="connection" margin-bottom: 20px>
     <h2 style="background-color: #421e00ad; padding: 5px; color: #ffff;">SALON</h2>
 {% if user.is_authenticated %}
-    <p>Tu es connecté en tant que <b>{{ user.username }}</b>. Crée une partie ou rejoins celle d'un ami.</p>
+    <p>Tu es connecté en tant que 
+       <b class="username">{{ user.username }}</b>. Crée une partie ou rejoins celle d'un ami.</p>
 {% endif %}</div>
 
 <div class="connection" margin-top: 20px;">
