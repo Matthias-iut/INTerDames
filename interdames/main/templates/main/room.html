@@ -3,16 +3,6 @@
 {% block contenu %}
 <div class="welcome">Room</div>   
 
-
-<div class="connection">Joueur 1 (les blancs) : {{ room.player_white.username }}
-{% if room.player_black %}
-    <p>Joueur 2 (les noirs) : {{ room.player_black.username }}</p>
-{% else %}
-    <p>En attente d'un adversaire...</p>
-
-</div>
-{% endif %}
-
 {% if room.statut == 'attente' %}
 <div class="connection" >
     <p>Envoie ce lien à ton adversaire :</p>
@@ -22,8 +12,19 @@
 </div>
 {% endif %}
 
-{% include 'main/zone_jeu.html' %}
+<div hx-ext="ws" ws-connect="/ws/room/{{ room.token }}/">
+    <div class="connection">
+        <p id="etat-connexion">Connexion au serveur...</p>
+        <p>Joueur 1 (les blancs) : {{ room.user1Pseudo }}</p>
+        {% if room.user2Pseudo %}
+            <p>Joueur 2 (les noirs) : {{ room.user2Pseudo }}</p>
+        {% else %}
+            <p>En attente d'un adversaire...</p>
+        {% endif %}
+    </div>
 
+    {% include 'main/zone_jeu.html' %}
+</div>
 
 <p><a href="/salon/">Retour au salon</a></p>
 
