@@ -232,3 +232,33 @@ def coups_max(plateau, couleur):
                 for coup in deplacement_pion_possibles(plateau, ligne, colonne):
                     deplacements.append(coup)
     return deplacements
+
+print(coups_max(plateau_test(), "blanc"))
+
+def total_pieces(plateau):
+    total = {"blanc": 0, "noir": 0}
+    for ligne in range(10):
+        for colonne in range(10):
+            piece = plateau[ligne][colonne]
+            if piece == "b" or piece == "B":
+                total["blanc"] += 1
+            elif piece == "n" or piece == "N":
+                total["noir"] += 1
+    return total
+
+print(total_pieces(plateau_depart()))
+
+def gagnant(plateau):
+    total = total_pieces(plateau)
+    if total["blanc"] == 0:
+        return "noir"
+    elif total["noir"] == 0:
+        return "blanc"
+    elif len(coups_max(plateau, "blanc")) == 0:
+        return "noir"
+    elif len(coups_max(plateau, "noir")) == 0:
+        return "blanc"
+    else:
+        return None
+
+#print(gagnant(plateau_depart()))
