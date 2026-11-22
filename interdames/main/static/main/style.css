@@ -113,7 +113,11 @@ button {
 }
 
 
-
+.username {
+    color: #c91f99;       
+    font-size: 20px;      
+    font-weight: bold;   
+}
 
 .damier {
     border-collapse: collapse;
@@ -159,8 +163,30 @@ button {
     height: 32px;
 }
 
-.username {
-    color: #c91f99;       /* Couleur bleue */
-    font-size: 20px;      /* Taille du texte */
-    font-weight: bold;    /* Gras */
+.cliquable {
+    cursor: pointer;
 }
+
+.selection {
+    box-shadow: 0px 0px 8px 4px yellow;
+}
+
+.rond-vert {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: #2ecc40;
+    margin: auto;
+}
+
+.ton-tour {
+    color: green;
+    font-weight: bold;
+}
+
+
+
+
+
+
+
