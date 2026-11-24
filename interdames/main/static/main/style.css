@@ -114,10 +114,6 @@ button {
 
 
 
-.zone {
-    background-color: rgb(31, 193, 128);
-}
-
 
 .damier {
     border-collapse: collapse;
@@ -161,4 +157,10 @@ button {
     border: 4px solid gold;
     width: 32px;
     height: 32px;
+}
+
+.username {
+    color: #c91f99;       /* Couleur bleue */
+    font-size: 20px;      /* Taille du texte */
+    font-weight: bold;    /* Gras */
 }
