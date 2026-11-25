@@ -1,16 +1,29 @@
 <div id="zone-jeu">
+    {% if couleur == 'blanc' %}
+        <p>Tu joues les <b>blancs</b> (en bas).</p>
+    {% endif %}
+    {% if couleur == 'noir' %}
+        <p>Tu joues les <b>noirs</b> (en haut).</p>
+    {% endif %}
     {% if room.statut == 'en_cours' %}
-        <p>C'est au tour des <b>{{ room.tour }}s</b>.</p>
+        {% if room.tour == couleur %}
+            <p class="ton-tour">C'est ton tour ! Clique sur un pion.</p>
+        {% else %}
+            <p>C'est au tour de l'adversaire...</p>
+        {% endif %}
     {% endif %}
     <table class="damier">
         {% for ligne in cases %}
         <tr>
             {% for case in ligne %}
             <td class="{{ case.couleur }}">
-                {% if case.piece == 'b' %}<div class="pion blanc"></div>{% endif %}
-                {% if case.piece == 'n' %}<div class="pion noir"></div>{% endif %}
-                {% if case.piece == 'B' %}<div class="pion blanc dame"></div>{% endif %}
-                {% if case.piece == 'N' %}<div class="pion noir dame"></div>{% endif %}
+                {% if case.piece != '' %}
+                    <div class="pion {% if case.piece == 'b' or case.piece == 'B' %}blanc{% else %}noir{% endif %}{% if case.piece == 'B' or case.piece == 'N' %} dame{% endif %}{% if case.selection %} selection{% endif %}{% if case.cliquable %} cliquable{% endif %}"
+                        {% if case.cliquable %}hx-get="/room/{{ room.token }}/coups/?l={{ case.l }}&c={{ case.c }}" hx-target="#zone-jeu" hx-swap="outerHTML"{% endif %}></div>
+                {% endif %}
+                {% if case.rond_vert %}
+                    <div class="rond-vert"></div>
+                {% endif %}
             </td>
             {% endfor %}
         </tr>

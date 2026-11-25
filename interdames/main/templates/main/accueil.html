@@ -15,8 +15,8 @@
 
     <form method="post">
         {% csrf_token %}
-        <p>Pseudo : <input type="text" name="username" maxlength="10" required></p>
-        <p>Mot de passe : <input type="password" name="password" required></p>
+        <p>Pseudo : <input type="text" name="pseudo" maxlength="10" required></p>
+        <p>Mot de passe : <input type="password" name="mdp" required></p>
         <p><button type="submit">Se connecter</button></p>
     </form>
  <a href="/inscription/" class="btn-inscription">Pas encore inscrit ?</a>
