@@ -3,15 +3,6 @@
 {% block contenu %}
 <div class="welcome">Room</div>   
 
-{% if room.statut == 'attente' %}
-<div class="connection" >
-    <p>Envoie ce lien à ton adversaire :</p>
-    <input type="text" id="lien" value="{{ lien }}" size="60" readonly>
-    <button onclick="copierLien()">Copier</button>
-    <span id="copie"></span>
-</div>
-{% endif %}
-
 <div hx-ext="ws" ws-connect="/ws/room/{{ room.token }}/">
     <div class="connection">
         <p id="etat-connexion">Connexion au serveur...</p>
@@ -23,7 +14,17 @@
         {% endif %}
     </div>
 
-    {% include 'main/zone_jeu.html' %}
+<div class="connection" {% if room.user1Pseudo and room.user2Pseudo %}style="display: none;"{% endif %} >
+    <p>Envoie ce lien à ton adversaire :</p>
+    <input type="text" id="lien" value="{{ lien }}" size="60">
+    <button onclick="copierLien()">Copier</button>
+    <span id="copie"></span>
+</div>
+
+
+    <div id="zone-jeu" {% if not room.user2Pseudo %}style="display: none;"{% endif %}>
+        {% include 'main/zone_jeu.html' %}
+    </div>
 </div>
 
 <p><a href="/salon/">Retour au salon</a></p>
@@ -37,4 +38,19 @@ function copierLien() {
     document.getElementById("copie").innerHTML = "Lien copié!";
 }
 </script>
+
+<script>
+{% if not room.user2Pseudo %}
+setInterval(() => {
+    fetch(window.location.href)
+        .then(res => res.text())
+        .then(html => {
+            if (!html.includes("En attente d'un adversaire...")) {
+                window.location.reload();
+            }
+        });
+}, 2000);
+{% endif %}
+</script>
+
 {% endblock %}

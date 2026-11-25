@@ -3,7 +3,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import salleDeJeu
-from .cache_partie import oublier_partie
+from .cache_partie import oublier_partie, lire_partie
+from .damier import contexte_zone, fabriquer_cases
 from .salleDeJeu import jeu
 
 def accueil(request):
@@ -63,6 +64,7 @@ def creer_room(request):
     if request.method == 'POST':
         nouvelle_room = salleDeJeu()
         nouvelle_room.user1Pseudo = request.user.username
+        nouvelle_room.plateau = jeu.plateau_depart()
         nouvelle_room.save()
         return redirect('room', token=nouvelle_room.token)
     return redirect('salon')
@@ -78,10 +80,17 @@ def room(request, token):
 
     if la_room.user1Pseudo != pseudo and la_room.user2Pseudo != pseudo:
         return render(request, 'main/salon.html', {'erreur': 'Cette room est déjà pleine (2 joueurs max)'})
+    if len(la_room.plateau) == 0:
+        la_room.plateau = jeu.plateau_depart()
+        la_room.save()
+        oublier_partie(la_room.token)
+    partie = lire_partie(la_room.token)
+    
     lien = request.build_absolute_uri()
     
-    
-    return render(request, 'main/room.html', {'room': la_room, 'lien': lien})
+    contexte = contexte_zone(partie, pseudo, lien)
+    contexte['room'] = la_room
+    return render(request, 'main/room.html', contexte)
 
     
     return redirect('salon')
@@ -93,24 +102,6 @@ def ma_couleur(la_room, utilisateur):
         return 'noir'
     return None
 
-
-
-def fabriquer_cases(la_room):
-    cases = [] # on transforme le plateau en une liste de cases plus facile a afficher dans le template
-    for l in range(10):
-        ligne = []
-        for c in range(10):
-            case = {}
-            case['l'] = l
-            case['c'] = c
-            case['piece'] = la_room.plateau[l][c]
-            if (l + c) % 2 == 1:
-                case['couleur'] = 'foncee'
-            else:
-                case['couleur'] = 'claire'
-            ligne.append(case)
-        cases.append(ligne)
-    return cases
 
 
 @login_required
