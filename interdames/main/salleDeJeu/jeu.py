@@ -280,3 +280,40 @@ def gagnant(plateau,couleur):
 
 
 #la fonction en dessous est en cours
+
+#partie = {"plateau": plateau_depart(),
+#  "joueur1": "Alice", 
+# "joueur2": "Bob", 
+# "tour_actuel": "blanc", 
+# "active": True}
+
+
+def tour_joueur(partie, pseudo, depart, arrivee):
+    if partie["active"] == False:
+        return "En recherche de joueurs"
+    if partie["joueur2"] == "":
+        return "En recherche de joueurs"
+    if partie["joueur1"] == pseudo:
+        couleur = "blanc"
+    elif partie["joueur2"] == pseudo:
+        couleur = "noir"
+    else:
+        return "Erreur ! Vous n'êtes pas dans cette partie"
+    if partie["tour_actuel"] != couleur:
+        return "Erreur ! Ce n'est pas votre tour"
+
+    for coup in coups_max(partie["plateau"], couleur):
+        if coup["depart"]==depart and coup["arrivee"]==arrivee:
+            return coup
+        else:
+            return "Erreur ! Coup invalide"
+    tour_suivant = partie.copy()
+    tour_suivant["plateau"] = action_joue(partie["plateau"], coup)
+    if couleur == "blanc":
+        tour_suivant["tour_actuel"] = "noir"
+    else:
+        tour_suivant["tour_actuel"] = "blanc"
+    if gagnant(tour_suivant["plateau"], tour_suivant["tour_actuel"]) != None:
+        tour_suivant["active"] = False
+        tour_suivant["gagnant"] = pseudo
+    return tour_suivant
