@@ -25,6 +25,10 @@
     <div id="zone-jeu" {% if not room.user2Pseudo %}style="display: none;"{% endif %}>
         {% include 'main/zone_jeu.html' %}
     </div>
+    
+    {% if not room.user2Pseudo %}
+    <div hx-get="" hx-trigger="every 2s" hx-target="body" hx-swap="outerHTML"></div>
+    {% endif %}
 </div>
 
 <p><a href="/salon/">Retour au salon</a></p>
@@ -38,19 +42,4 @@ function copierLien() {
     document.getElementById("copie").innerHTML = "Lien copié!";
 }
 </script>
-
-<script>
-{% if not room.user2Pseudo %}
-setInterval(() => {
-    fetch(window.location.href)
-        .then(res => res.text())
-        .then(html => {
-            if (!html.includes("En attente d'un adversaire...")) {
-                window.location.reload();
-            }
-        });
-}, 2000);
-{% endif %}
-</script>
-
 {% endblock %}
