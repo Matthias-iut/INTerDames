@@ -43,7 +43,7 @@ def couleur_de_piece(piece):
     elif piece == "b" or piece == "B":
         return "blanc"
     else:
-        return "erreur"
+        return "Il n'y a pas de pièce sur cette case"
 
 #print (couleur_de_piece("n"))
 
@@ -85,13 +85,14 @@ def copier_plateau(plateau):
         copie.append(copie_ligne)
     return copie
 
-
+Directions=[[-1,-1],[-1,1],[1,-1],[1,1]] #les 4 directions possibles pour les déplacements et les prises
 
 def deplacement_pion_possibles(plateau, ligne, colonne):
     piece=plateau[ligne][colonne]
     action=[]
     if piece=="":
         return action
+    
     if piece=="B" or piece=="N": #si c'est une dame, on peut se déplacer dans toutes les directions
         for d in Directions:
             nouvelle_ligne=ligne+d[0]
@@ -101,6 +102,7 @@ def deplacement_pion_possibles(plateau, ligne, colonne):
                                : [[nouvelle_ligne, nouvelle_colonne]], "prises": []})
                 nouvelle_ligne+=d[0]
                 nouvelle_colonne+=d[1]
+        
         return action
     else:
         if couleur_de_piece(piece)=="blanc":
@@ -124,32 +126,40 @@ def deplacement_pion_possibles(plateau, ligne, colonne):
 #colonne=3
 #print(deplacement_pion_possibles(plateau_depart(),ligne,colonne))
 
-
-
-Directions=[[-1,-1],[-1,1],[1,-1],[1,1]] #les 4 directions possibles pour les déplacements et les prises
-
 def recherche_prises(plateau,ligne, colonne,piece,prise_effectuees):
     suite=[]
     couleur=couleur_de_piece(piece)
     for d in Directions:
+        #cas des dames
         if piece=="B" or piece=="N": #si c'est une dame, on peut prendre dans toutes les directions
             l_diag=ligne+d[0]
             c_diag=colonne+d[1]
             while position_valide(l_diag,c_diag)==True and plateau[l_diag][c_diag]=="":
                 l_diag+=d[0]
                 c_diag+=d[1]
-            if couleur_de_piece(plateau[l_diag][c_diag])!=couleur_adversaire(piece):
-                continue
             if position_valide(l_diag,c_diag)==False:
+                            continue
+            if couleur_de_piece(plateau[l_diag][c_diag])!=couleur_adversaire(piece):
                 continue
             if [l_diag,c_diag] in prise_effectuees:
                 continue
+            prise=[l_diag,c_diag]
             l_opps=l_diag+d[0]
             c_opps=c_diag+d[1]
             while position_valide(l_opps,c_opps)==True and plateau[l_opps][c_opps]=="":
-                suite.append([l_opps,c_opps]) #on ajoute le coup à la liste des coups possibles
+                arrivee=[l_opps,c_opps]
+                rec=recherche_prises(plateau,l_opps,c_opps,piece,prise_effectuees+[prise])
+                if len(rec)==0:
+                    suite.append({"depart":[ligne,colonne],"chemin":[arrivee],"prises":[prise]}) #on ajoute le coup à la liste des coups possibles
+                else:
+                    for s in rec:
+                        suite.append({"depart":[ligne,colonne],"chemin":[arrivee]+s["chemin"],"prises":[prise]+s["prises"]})
                 l_opps+=d[0]
                 c_opps+=d[1]
+            continue
+        #modification de la fonction qui ajoutait des cases au lieu de coups
+
+        #cas des pions
         else:
             l_adv=ligne+d[0]
             c_adv=colonne+d[1]  #emplacement de la pièce adverse
@@ -167,6 +177,8 @@ def recherche_prises(plateau,ligne, colonne,piece,prise_effectuees):
         prise=[l_adv,c_adv]
         arrivee=[l_arrivee,c_arrivee]
         rec=recherche_prises(plateau,l_arrivee,c_arrivee,piece,prise_effectuees+[prise]) #on ajoute la prise effectuée à la liste des prises
+        if position_valide(l_adv,c_adv) == False:
+            continue
         if len(rec)==0:     #si on ne peut plus prendre de pièces
             suite.append({"depart":[ligne,colonne],"chemin":[arrivee],"prises":[prise]})
         else:
@@ -201,6 +213,7 @@ def action_joue(plateau, action):
     coups_joue[arrivee[0]][arrivee[1]] = piece
     for p in action["prises"]: #on supprime les pièces prises du plateau
         coups_joue[p[0]][p[1]] = ""
+    coups_joue = promotion_dame(coups_joue, action, piece) #on vérifie si la pièce est promue en dame
     return coups_joue
 
 #print(action_joue(plateau_test(),prises_possibles(plateau_test(),5,2)[0]))
@@ -233,7 +246,7 @@ def coups_max(plateau, couleur):
                     deplacements.append(coup)
     return deplacements
 
-print(coups_max(plateau_test(), "blanc"))
+#print(coups_max(plateau_test(), "blanc"))
 
 def total_pieces(plateau):
     total = {"blanc": 0, "noir": 0}
@@ -246,19 +259,24 @@ def total_pieces(plateau):
                 total["noir"] += 1
     return total
 
-print(total_pieces(plateau_depart()))
+#print(total_pieces(plateau_depart()))
 
-def gagnant(plateau):
+def gagnant(plateau,couleur):
     total = total_pieces(plateau)
-    if total["blanc"] == 0:
-        return "noir"
-    elif total["noir"] == 0:
-        return "blanc"
-    elif len(coups_max(plateau, "blanc")) == 0:
-        return "noir"
-    elif len(coups_max(plateau, "noir")) == 0:
-        return "blanc"
+    if couleur == "blanc":
+        adversaire = "noir"
+    else:
+        adversaire = "blanc"
+    if total[couleur] == 0:
+        return adversaire
+    elif len(coups_max(plateau, couleur)) == 0:
+        return adversaire
     else:
         return None
+#modification de la fonction qui faisait terminer la partie si un joueur
+#ne pouvait pas jouer alors que ce n'était pas son tour.
 
-#print(gagnant(plateau_depart()))
+#print(gagnant(plateau_depart(), "blanc"))
+
+
+#la fonction en dessous est en cours
