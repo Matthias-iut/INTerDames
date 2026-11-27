@@ -39,7 +39,9 @@
                     {% endif %}
                 {% endif %}
                 {% if case.rond_vert %}
-                    <div class="rond-vert"></div>
+                    <button ws-send hx-vals='{"action": "jouer", "ligne": {{ case.l }}, "colonne": {{ case.c }}}'>
+                        <div class="rond-vert"></div>
+                    </button>
                 {% endif %}
             </td>
             {% endfor %}
