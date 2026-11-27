@@ -3,33 +3,30 @@
 {% block contenu %}
 <div class="welcome">Room</div>   
 
-<div hx-ext="ws" ws-connect="/ws/room/{{ room.token }}/">
+<div hx-ext="ws" ws-connect="/ws/room/{{ partie.token }}/">
     <div class="connection">
         <p id="etat-connexion">Connexion au serveur...</p>
-        <p>Joueur 1 (les blancs) : {{ room.user1Pseudo }}</p>
-        {% if room.user2Pseudo %}
-            <p>Joueur 2 (les noirs) : {{ room.user2Pseudo }}</p>
-        {% else %}
-            <p>En attente d'un adversaire...</p>
-        {% endif %}
     </div>
 
-<div class="connection" {% if room.user1Pseudo and room.user2Pseudo %}style="display: none;"{% endif %} >
-    <p>Envoie ce lien à ton adversaire :</p>
-    <input type="text" id="lien" value="{{ lien }}" size="60">
-    <button onclick="copierLien()">Copier</button>
-    <span id="copie"></span>
-</div>
-
-
-    <div id="zone-jeu" {% if not room.user2Pseudo %}style="display: none;"{% endif %}>
-        {% include 'main/zone_jeu.html' %}
-    </div>
-    
-    {% if not room.user2Pseudo %}
+    {% include 'main/zone_jeu.html' %}
+    {% if not partie.joueur2 %}
     <div hx-get="" hx-trigger="every 2s" hx-target="body" hx-swap="outerHTML"></div>
     {% endif %}
 </div>
+        
+
+    
 
 <p><a href="/salon/">Retour au salon</a></p>
+
+<script>
+function copierLien() {
+    var champ = document.getElementById("lien");
+    champ.select();
+    document.execCommand("copy");
+    document.getElementById("copie").innerHTML = "Lien copié !";
+}
+</script>
 {% endblock %}
+
+

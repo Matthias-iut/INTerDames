@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import salleDeJeu
 from .cache_partie import oublier_partie, lire_partie
-from .damier import contexte_zone, fabriquer_cases
+from .damier import contexte_zone#, fabriquer_cases
 from .salleDeJeu import jeu
 
 def accueil(request):
@@ -93,7 +93,6 @@ def room(request, token):
     return render(request, 'main/room.html', contexte)
 
     
-    return redirect('salon')
 
 def ma_couleur(la_room, utilisateur):
     if la_room.user1Pseudo == utilisateur.username:
@@ -129,3 +128,4 @@ def rejoindre(request):
         if salleDeJeu.objects.filter(token=token).exists() == False:
             return render(request, 'main/salon.html', {'erreur': "Ce lien n'est pas valide"})
         return redirect('room', token=token)
+    return redirect('salon')
