@@ -1,8 +1,9 @@
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import JsonWebsocketConsumer
 from django.template.loader import render_to_string
-from .cache_partie import lire_partie
+from .cache_partie import enregistrer_partie, lire_partie
 from .damier import contexte_zone
+from .salleDeJeu import jeu
 
 
 class RoomConsumer(JsonWebsocketConsumer):
@@ -10,6 +11,7 @@ class RoomConsumer(JsonWebsocketConsumer):
 
         self.token = self.scope['url_route']['kwargs']['token']
         self.pseudo = self.scope['user'].username
+        self.depart = None
         self.groupe = 'room_' + self.token
         self.depart = None
         async_to_sync(self.channel_layer.group_add)(self.groupe, self.channel_name)
@@ -26,6 +28,8 @@ class RoomConsumer(JsonWebsocketConsumer):
         #print(1)
         if contenu.get('action') == 'choisir':
             self.choisir(contenu)
+        if contenu.get('action') == 'jouer':
+            self.jouer(contenu)
 
     def lire_case(self,contenu):
         try:
@@ -38,10 +42,20 @@ class RoomConsumer(JsonWebsocketConsumer):
         # print(0)
         self.envoyer_zone('')
 
+    def jouer(self, contenu):
+        arrivee = self.lire_case(contenu)
+        partie = lire_partie(self.token)
+        nouvelle_partie, erreur = jeu.tour_joueur(partie, self.pseudo, self.depart, arrivee)
+        self.depart = None
+        if erreur!='':
+            self.envoyer_zone(erreur)
+            return 
+        enregistrer_partie(nouvelle_partie)
+        self.envoyer_zone('')
+
+
     def envoyer_zone(self, message):
         partie = lire_partie(self.token)
-        if partie is None:
-            return
         contexte = contexte_zone(partie, self.pseudo, '', self.depart, message)
         self.send(text_data=render_to_string('main/zone_jeu.html', contexte))
 
