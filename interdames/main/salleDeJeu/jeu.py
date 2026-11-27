@@ -4,6 +4,8 @@
 #chaque joueur a 20 pions sur les cases foncées des 4 premières lignes de son côté du plateau
 #les blancs commencent toujours
 
+Directions=[[-1,-1],[-1,1],[1,-1],[1,1]] #les 4 directions possibles pour les déplacements et les prises
+
 def plateau_depart():
     plateau = []
     for ligne in range(10):
@@ -84,8 +86,6 @@ def copier_plateau(plateau):
             copie_ligne.append(plateau[ligne][colonne])
         copie.append(copie_ligne)
     return copie
-
-Directions=[[-1,-1],[-1,1],[1,-1],[1,1]] #les 4 directions possibles pour les déplacements et les prises
 
 def deplacement_pion_possibles(plateau, ligne, colonne):
     piece=plateau[ligne][colonne]
@@ -278,9 +278,6 @@ def gagnant(plateau,couleur):
 
 #print(gagnant(plateau_depart(), "blanc"))
 
-
-#la fonction en dessous est en cours
-
 #partie = {"plateau": plateau_depart(),
 #  "joueur1": "Alice", 
 # "joueur2": "Bob", 
@@ -288,32 +285,33 @@ def gagnant(plateau,couleur):
 # "active": True}
 
 
-def tour_joueur(partie, pseudo, depart, arrivee):
+def tour_joueur(partie, pseudo, depart, arrivee):   #partie est un dictionnaire ressemblant à l'exemple ci-dessus.
     if partie["active"] == False:
-        return "En recherche de joueurs"
+        return partie,"La partie est terminée"
     if partie["joueur2"] == "":
-        return "En recherche de joueurs"
-    if partie["joueur1"] == pseudo:
+        return partie, "En recherche de joueurs"
+    if partie["joueur1"] == pseudo:                 #pour simplifier, le joueur 1 est toujours blanc
         couleur = "blanc"
     elif partie["joueur2"] == pseudo:
         couleur = "noir"
     else:
-        return "Erreur ! Vous n'êtes pas dans cette partie"
-    if partie["tour_actuel"] != couleur:
-        return "Erreur ! Ce n'est pas votre tour"
+        return partie, "Erreur ! Vous n'êtes pas dans cette partie"
+    if partie["tour"] != couleur:
+        return partie, "Erreur ! Ce n'est pas votre tour"
 
+    le_coup = None
     for coup in coups_max(partie["plateau"], couleur):
-        if coup["depart"]==depart and coup["arrivee"]==arrivee:
-            return coup
-        else:
-            return "Erreur ! Coup invalide"
+        if coup["depart"]==depart and coup["chemin"][-1]==arrivee:
+            le_coup = coup
+    if le_coup == None:
+        return partie, "Erreur ! Coup invalide"
     tour_suivant = partie.copy()
-    tour_suivant["plateau"] = action_joue(partie["plateau"], coup)
+    tour_suivant["plateau"] = action_joue(partie["plateau"], le_coup)
     if couleur == "blanc":
-        tour_suivant["tour_actuel"] = "noir"
+        tour_suivant["tour"] = "noir"
     else:
-        tour_suivant["tour_actuel"] = "blanc"
-    if gagnant(tour_suivant["plateau"], tour_suivant["tour_actuel"]) != None:
+        tour_suivant["tour"] = "blanc"
+    if gagnant(tour_suivant["plateau"], tour_suivant["tour"]) != None:
         tour_suivant["active"] = False
         tour_suivant["gagnant"] = pseudo
-    return tour_suivant
+    return tour_suivant, ""

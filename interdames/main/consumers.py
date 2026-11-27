@@ -12,7 +12,9 @@ class RoomConsumer(JsonWebsocketConsumer):
     def connect(self):
 
         self.token = self.scope['url_route']['kwargs']['token']
-        self.groupe = 'room_' + self.token
+        self.pseudo = self.scope['user'].username
+        self.depart = None
+        self.groupe = 'room_' + self.token  
         async_to_sync(self.channel_layer.group_add)(self.groupe, self.channel_name)
         self.accept()
 

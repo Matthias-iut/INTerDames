@@ -1,32 +1,52 @@
 <div id="zone-jeu">
+    <div class="connection" {% if partie.joueur1 and partie.joueur2 %}style="display: none;"{% endif %}>
+        <p>Envoie ce lien à ton adversaire :</p>
+        <input type="text" id="lien" value="{{ lien }}" size="60">
+        <button type="button" onclick="copierLien()">Copier</button>
+        <span id="copie"></span>
+    </div>
     {% if couleur == 'blanc' %}
         <p>Tu joues les <b>blancs</b> (en bas).</p>
     {% endif %}
     {% if couleur == 'noir' %}
         <p>Tu joues les <b>noirs</b> (en haut).</p>
     {% endif %}
-    {% if room.statut == 'en_cours' %}
-        {% if room.tour == couleur %}
+    {% if statut == 'en_cours' %}
+        {% if partie.tour == couleur %}
             <p class="ton-tour">C'est ton tour ! Clique sur un pion.</p>
         {% else %}
             <p>C'est au tour de l'adversaire...</p>
         {% endif %}
     {% endif %}
+
+    {% if message %}
+        <p class="erreur">{{ message }}</p>
+    {% endif %}
+
+    {% if statut != 'attente' %}
     <table class="damier">
         {% for ligne in cases %}
         <tr>
             {% for case in ligne %}
             <td class="{{ case.couleur }}">
                 {% if case.piece != '' %}
-                    <div class="pion {% if case.piece == 'b' or case.piece == 'B' %}blanc{% else %}noir{% endif %}{% if case.piece == 'B' or case.piece == 'N' %} dame{% endif %}{% if case.selection %} selection{% endif %}{% if case.cliquable %} cliquable{% endif %}"
-                        {% if case.cliquable %}hx-get="/room/{{ room.token }}/coups/?l={{ case.l }}&c={{ case.c }}" hx-target="#zone-jeu" hx-swap="outerHTML"{% endif %}></div>
+                    {% if case.cliquable %}
+                    <button ws-send hx-vals='{"action": "choisir", "ligne": {{ case.l }}, "colonne": {{ case.c }}}'>
+                    {% endif %}
+                    <div class="pion {% if case.piece == 'b' or case.piece == 'B' %}blanc{% else %}noir{% endif %}{% if case.piece == 'B' or case.piece == 'N' %} dame{% endif %}{% if case.selection %} selection{% endif %}{% if case.cliquable %} cliquable{% endif %}"></div>
+                    {% if case.cliquable %}
+                    </button>
+                    {% endif %}
                 {% endif %}
                 {% if case.rond_vert %}
-                    <div class="rond-vert"></div>
+                    <button ws-send hx-vals='{"action": "jouer", "ligne": {{ case.l }}, "colonne": {{ case.c }}}'>
+                        <div class="rond-vert"></div>
+                    </button>
                 {% endif %}
             </td>
             {% endfor %}
         </tr>
         {% endfor %}
     </table>
+    {% endif %}
 </div>
