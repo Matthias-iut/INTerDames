@@ -18,7 +18,7 @@
             <p>C'est au tour de l'adversaire...</p>
         {% endif %}
     {% endif %}
-    
+
     {% if message %}
         <p class="erreur">{{ message }}</p>
     {% endif %}
@@ -30,8 +30,13 @@
             {% for case in ligne %}
             <td class="{{ case.couleur }}">
                 {% if case.piece != '' %}
-                    <div class="pion {% if case.piece == 'b' or case.piece == 'B' %}blanc{% else %}noir{% endif %}{% if case.piece == 'B' or case.piece == 'N' %} dame{% endif %}{% if case.selection %} selection{% endif %}{% if case.cliquable %} cliquable{% endif %}"
-                        {% if case.cliquable %}hx-get="/room/{{ partie.token }}/coups/?l={{ case.l }}&c={{ case.c }}" hx-target="#zone-jeu" hx-swap="outerHTML"{% endif %}></div>
+                    {% if case.cliquable %}
+                    <button ws-send hx-vals='{"action": "choisir", "ligne": {{ case.l }}, "colonne": {{ case.c }}}'>
+                    {% endif %}
+                    <div class="pion {% if case.piece == 'b' or case.piece == 'B' %}blanc{% else %}noir{% endif %}{% if case.piece == 'B' or case.piece == 'N' %} dame{% endif %}{% if case.selection %} selection{% endif %}{% if case.cliquable %} cliquable{% endif %}"></div>
+                    {% if case.cliquable %}
+                    </button>
+                    {% endif %}
                 {% endif %}
                 {% if case.rond_vert %}
                     <div class="rond-vert"></div>

@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .models import salleDeJeu
 from .cache_partie import oublier_partie, lire_partie
-from .damier import contexte_zone#, fabriquer_cases
+from .damier import contexte_zone
 from .salleDeJeu import jeu
 
 def accueil(request):
@@ -91,32 +91,6 @@ def room(request, token):
     contexte = contexte_zone(partie, pseudo, lien)
     contexte['room'] = la_room
     return render(request, 'main/room.html', contexte)
-
-    
-
-def ma_couleur(la_room, utilisateur):
-    if la_room.user1Pseudo == utilisateur.username:
-        return 'blanc'
-    if la_room.user2Pseudo == utilisateur.username:
-        return 'noir'
-    return None
-
-
-
-@login_required
-def coups(request, token):
-    # appele par HTMX quand on clique sur un pion
-    la_room = get_object_or_404(salleDeJeu, token=token)
-    couleur = ma_couleur(la_room, request.user)
-    if couleur == None:
-        return HttpResponseForbidden("Tu ne joues pas dans cette room")
-    try:
-        depart = [int(request.GET.get('l')), int(request.GET.get('c'))]
-    except:
-        depart = None
-    cases = fabriquer_cases(la_room, couleur, depart)
-    return render(request, 'main/zone_jeu.html', {'room': la_room, 'cases': cases, 'couleur': couleur})
-
 
 @login_required
 def rejoindre(request):
